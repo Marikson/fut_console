@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "lowdb": "^1.0.0"
+  },
+  "name": "szakdoga",
+  "version": "1.0.0",
+  "main": "FUT_21_server.js",
+  "devDependencies": {
+    "json-server": "^0.16.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
