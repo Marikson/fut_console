@@ -1,4 +1,3 @@
-import requests
 import display
 import login
 import vars

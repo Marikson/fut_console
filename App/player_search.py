@@ -2,6 +2,7 @@ import display
 import vars
 import request_try
 
+
 def search_for_player():
     display.player_search_menupoints()
     params = {}
@@ -25,7 +26,7 @@ def search_for_player():
         if given_val == 'back':
             search_for_player()
         else:
-            params[ vars.search_aspect[int(nums_list[i]) - 1]] = given_val
+            params[vars.search_aspect[int(nums_list[i]) - 1]] = given_val
 
     matched_players = request_try.try_request_get(vars.players_URL, params)
     if matched_players:
@@ -38,9 +39,6 @@ def search_for_player():
             more_details(names)
     else:
         print(display.Bcolors.OKCYAN + "No matching player with params above!" + display.Bcolors.ENDC + '\n')
-
-
-
 
 
 def more_details(player_names):

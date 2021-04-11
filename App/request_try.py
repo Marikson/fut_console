@@ -51,4 +51,3 @@ def try_request_post(url, params):
     except requests.exceptions.RequestException as err:
         print(display.Bcolors.WARNING + "OOps: Something Else" + display.Bcolors.ENDC, err)
         raise SystemExit(err)
-

@@ -2,7 +2,6 @@ from prettytable import PrettyTable
 import player_search
 import team_editor
 import login
-import re
 
 
 class Bcolors:
@@ -52,6 +51,7 @@ def get_menu_choice():
             loop = False
         else:
             input(Bcolors.WARNING + "Wrong menu selection. Enter any key to try again.." + Bcolors.ENDC)
+
 
 def show_starting_11(players_list, positions):
     player_rows = ["POS", "Name", "Overall rating", "Position", "Nationality", "Club", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
@@ -137,8 +137,7 @@ def show_starting_11(players_list, positions):
                                   players_list[i]['dribbling'],
                                   players_list[i]['defending'],
                                   players_list[i]['physicality']]
-
-        spreadsheet.add_row(attributes)
+                spreadsheet.add_row(attributes)
 
     print(spreadsheet)
 
