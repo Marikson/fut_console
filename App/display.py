@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import player_search
 import team_editor
+import sell
 import login
 
 
@@ -33,6 +34,7 @@ def get_menu_choice():
         choice = input("Enter your choice: ")
 
         if choice == '1':
+            sell.sell_player()
             loop = False
         elif choice == '2':
             loop = False
@@ -43,7 +45,6 @@ def get_menu_choice():
             loop = False
         elif choice == '5':
             team_editor.my_team()
-            # starting_eleven()
             loop = False
         elif choice == '6':
             print("Logging out..." + '\n')

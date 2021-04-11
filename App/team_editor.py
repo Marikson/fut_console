@@ -2,6 +2,8 @@ import display
 import login
 import vars
 import request_try
+import list_players
+
 
 def my_team():
     display.my_team_menupoints()
@@ -10,10 +12,10 @@ def my_team():
         print(display.Bcolors.OKBLUE + "  Going back to FUT MENU" + display.Bcolors.ENDC + '\n')
         display.get_menu_choice()
     elif int(choice) == 1:
-        list_starting_11()
+        list_players.list_starting_11()
         # list_players('starting_11', True)
     elif int(choice) == 2:
-        list_owned_players()
+        list_players.list_owned_players()
         # list_players('owned_players', True)
     elif int(choice) == 3:
         edit_starting_eleven()
@@ -21,43 +23,7 @@ def my_team():
         print(display.Bcolors.WARNING + "  No menupoint found with number: " + choice + "!" + display.Bcolors.ENDC)
         my_team()
 
-
-def get_users_players_id(type_of_players):
-    user = request_try.try_request_get(vars.users_URL, {'id': login.user_id})
-    if user:
-        users_players = user[0][type_of_players]
-        return users_players
-
-
-def list_owned_players():
-    users_players = get_users_players_id('owned_players')
-    users_players_extended_list = []
-    players = request_try.try_request_get(vars.players_URL, {'futbin_id': users_players})
-
-    for i in range(len(players)):
-        users_players_extended_list.append(players[i])
-
-    print(display.Bcolors.OKBLUE + "Your owned players" + display.Bcolors.ENDC)
-    display.show_players(users_players_extended_list)
-
-
-def list_starting_11():
-    users_players = get_users_players_id('starting_11')
-    users_players_extended_list = []
-    positions = list(users_players.keys())
-    users_players_id = list(users_players.values())
-
-    players = request_try.try_request_get(vars.players_URL, {'futbin_id': users_players_id})
-    for j in positions:
-        for i in range(len(players)):
-            if int(players[i]['futbin_id']) == users_players[j]:
-                players[i]['POS'] = j
-                users_players_extended_list.append(players[i])
-
-    print(display.Bcolors.OKBLUE + "Your starting 11" + display.Bcolors.ENDC)
-    display.show_starting_11(users_players_extended_list, positions)
-
-
+"""
 def list_players(type_of_players, can_return):
     users_players = get_users_players_id(type_of_players)
     users_players_extended_list = []
@@ -78,13 +44,13 @@ def list_players(type_of_players, can_return):
         display.show_players(users_players_extended_list)
     if can_return:
         my_team()
-
+"""
 
 def edit_starting_eleven():
     # list_players('owned_players', False)
     # list_players('starting_11', False)
-    list_owned_players()
-    list_starting_11()
+    list_players.list_owned_players()
+    list_players.list_starting_11()
 
     input_names = input("Enter the full name of players you want to change: ")
     if input_names == "back":
@@ -113,31 +79,18 @@ def edit_starting_eleven():
 
 
 def changing(futbin_ids):
-    owned = get_users_players_id('owned_players')
-    print(owned)
-    starting = get_users_players_id('starting_11')
-    print(starting)
+    matched_starting = list_players.select_matching(futbin_ids, "starting_11")
+    starting = matched_starting.ids
+    at_starting = matched_starting.at_ind
+    starting_found = matched_starting.found_counter
 
-    found_counter = 0
-    at_owned = {}
-    for i in range(len(owned)):
-        for j in range(len(futbin_ids)):
-            if owned[i] == futbin_ids[j]:
-                at_owned[i] = futbin_ids[j]
-                found_counter = found_counter + 1
-
-    at_starting = {}
-    for i in list(starting.keys()):
-        for j in range(len(futbin_ids)):
-            if starting[i] == futbin_ids[j]:
-                at_starting[i] = futbin_ids[j]
-                found_counter = found_counter + 1
-
-    print(at_starting)
-    print(at_owned)
+    matched_owned = list_players.select_matching(futbin_ids, "owned_players")
+    owned = matched_owned.ids
+    at_owned = matched_owned.at_ind
+    owned_found = matched_owned.found_counter
 
     users_id_url = vars.users_URL + '/' + str(login.user_id)
-    if found_counter == 2:
+    if starting_found + owned_found == 2:
         if len(at_starting) > len(at_owned):
             starting_ind = list(at_starting.keys())
             starting[starting_ind[0]] = at_starting[starting_ind[1]]
@@ -162,13 +115,8 @@ def changing(futbin_ids):
         else:
             owned_ind = list(at_owned.keys())
             starting_ind = list(at_starting.keys())
-            owned.remove(owned[int(owned_ind[0])])
-            owned.append(at_starting[starting_ind[0]])
-            # owned[int(owned_ind[0])] = at_starting[starting_ind[0]]
+            owned[int(owned_ind[0])] = at_starting[starting_ind[0]]
             starting[starting_ind[0]] = at_owned[owned_ind[0]]
-            print("After change:")
-            print(owned)
-            print(starting)
             post_starting = request_try.try_request_post(users_id_url, {'starting_11': starting})
             post_owned = request_try.try_request_post(users_id_url, {'owned_players': owned})
             if post_owned and post_starting:

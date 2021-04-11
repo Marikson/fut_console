@@ -28,11 +28,7 @@ def try_request_get(url, params):
 
 
 def try_request_post(url, params):
-    print("Params passed:")
-    print(params)
     param = json.dumps(params)
-    print("Param to json:")
-    print(param)
     try:
         response = requests.patch(url, data=param, headers={"Content-Type": "application/json"})
         if response.status_code == 404:
