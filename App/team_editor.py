@@ -89,13 +89,12 @@ def changing(futbin_ids):
     at_owned = matched_owned.at_ind
     owned_found = matched_owned.found_counter
 
-    users_id_url = vars.users_URL + '/' + str(login.user_id)
     if starting_found + owned_found == 2:
         if len(at_starting) > len(at_owned):
             starting_ind = list(at_starting.keys())
             starting[starting_ind[0]] = at_starting[starting_ind[1]]
             starting[starting_ind[1]] = at_starting[starting_ind[0]]
-            post = request_try.try_request_post(users_id_url, {'starting_11': starting})
+            post = request_try.try_request_patch(login.users_id_url, {'starting_11': starting})
             if post:
                 print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
 
@@ -117,8 +116,8 @@ def changing(futbin_ids):
             starting_ind = list(at_starting.keys())
             owned[int(owned_ind[0])] = at_starting[starting_ind[0]]
             starting[starting_ind[0]] = at_owned[owned_ind[0]]
-            post_starting = request_try.try_request_post(users_id_url, {'starting_11': starting})
-            post_owned = request_try.try_request_post(users_id_url, {'owned_players': owned})
+            post_starting = request_try.try_request_patch(login.users_id_url, {'starting_11': starting})
+            post_owned = request_try.try_request_patch(login.users_id_url, {'owned_players': owned})
             if post_owned and post_starting:
                 print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
             else:

@@ -3,8 +3,9 @@ import display
 import request_try
 import vars
 
-user_id = None
 login_tries = 1
+user_id = None
+users_id_url = None
 
 
 def try_log_in(tries):
@@ -30,7 +31,9 @@ def authenticate(usern, pw):
         if user[0]['password'] == pw:
             print('\n' + display.Bcolors.OKBLUE + "Hello " + usern + "!" + display.Bcolors.ENDC + '\n')
             global user_id
+            global users_id_url
             user_id = user[0]['id']
+            users_id_url = vars.users_URL + '/' + str(user_id)
             return True
 
     print(display.Bcolors.WARNING + "Wrong username, or password!" + display.Bcolors.ENDC)

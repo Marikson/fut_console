@@ -1,4 +1,6 @@
 from prettytable import PrettyTable
+import termplotlib
+import numpy
 import player_search
 import team_editor
 import sell
@@ -318,6 +320,24 @@ def show_extended_players(players_list):
         spreadsheet.add_row(attributes)
 
     print(spreadsheet)
+
+
+def show_price_advice(avgp, minp, maxp, prices, dates):
+    fig = termplotlib.figure()
+    fig.barh(prices, dates, force_ascii=True)
+    fig.show()
+
+    main_rows = ["Average price", "Lowest price", "Lowest price date", "Highest price", "Highest price date"]
+    spreadsheet = PrettyTable(main_rows)
+    data = [avgp,
+            minp['price'],
+            minp['date'],
+            maxp['price'],
+            maxp['date']]
+    spreadsheet.add_row(data)
+    print(spreadsheet)
+
+
 
 
 def my_team_menupoints():
