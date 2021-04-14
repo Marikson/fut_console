@@ -7,8 +7,8 @@ var Market = require('./market.json');
 
 
 module.exports  = () => ({
-    FUT_21_Players: Players,
-    FUT_21_Prices: Prices,
+    Players: Players,
+    Prices: Prices,
     Credentials: Credentials,
     Users: Users,
     Market: Market

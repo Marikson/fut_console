@@ -1,5 +1,6 @@
 import sys
 import display
+import main_menu
 import request_try
 import vars
 
@@ -11,7 +12,7 @@ users_id_url = None
 def try_log_in(tries):
     # if True:
     if log_in(tries):
-        display.get_menu_choice()
+        main_menu.get_menu_choice()
     else:
         try_log_in(tries + 1)
 
