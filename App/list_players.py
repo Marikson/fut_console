@@ -20,7 +20,7 @@ def list_owned_players():
     for i in range(len(players)):
         users_players_extended_list.append(players[i])
 
-    print(display.Bcolors.OKBLUE + "Your owned players" + display.Bcolors.ENDC)
+    print(display.Bcolors.OKBLUE + "Your Reserve Team" + display.Bcolors.ENDC)
     display.show_players(users_players_extended_list)
 
 
@@ -37,7 +37,7 @@ def list_starting_11():
                 players[i]['POS'] = j
                 users_players_extended_list.append(players[i])
 
-    print(display.Bcolors.OKBLUE + "Your starting 11" + display.Bcolors.ENDC)
+    print(display.Bcolors.OKBLUE + "Your Starting 11" + display.Bcolors.ENDC)
     display.show_starting_11(users_players_extended_list, positions)
 
 

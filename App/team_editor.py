@@ -19,14 +19,14 @@ def my_team():
             elif int(choice) == 2:
                 list_players.list_owned_players()
             elif int(choice) == 3:
-                edit_starting_eleven()
+                edit_team()
             else:
                 print(display.Bcolors.WARNING + "  No menu point found with number: " + choice + "!" + display.Bcolors.ENDC)
         except ValueError:
             print(display.Bcolors.WARNING + "  Aspect input must be a number! Given '" + choice + "' is wrong." + display.Bcolors.ENDC)
 
 
-def edit_starting_eleven():
+def edit_team():
     stay = True
     while stay:
         list_players.list_owned_players()
@@ -34,14 +34,14 @@ def edit_starting_eleven():
 
         input_names = input("Enter the full name of players you want to change: ")
         if input_names == "back":
-            print(display.Bcolors.OKBLUE + "  Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
+            print(display.Bcolors.OKBLUE + "Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
             return
 
         players_to_sub = input_names.split(',')
         for i in range(len(players_to_sub)):
             players_to_sub[i] = players_to_sub[i].rstrip().lstrip()
             if players_to_sub[i] == "back":
-                print(display.Bcolors.OKBLUE + "  Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
+                print(display.Bcolors.OKBLUE + "Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
                 return
         while "" in players_to_sub:
             players_to_sub.remove("")
@@ -79,7 +79,7 @@ def changing(futbin_ids):
 
         elif len(at_starting) < len(at_owned):
             # Pointless, non visible change
-            print(display.Bcolors.WARNING + "You are trying to change two players form subsitutes, which is pointless!" + display.Bcolors.ENDC)
+            print(display.Bcolors.WARNING + "You are trying to switch two players from substitutes, which is pointless!" + display.Bcolors.ENDC)
         else:
             owned_ind = list(at_owned.keys())
             starting_ind = list(at_starting.keys())
@@ -94,6 +94,3 @@ def changing(futbin_ids):
 
     else:
         print(display.Bcolors.WARNING + "One, or more of the names is/are misspelled!" + display.Bcolors.ENDC)
-
-# Nathan Aké, Allan Saint-Maximin
-# Nathan Aké, Harry Kite

@@ -1,5 +1,6 @@
 import display
 import sell
+import buy
 import player_search
 import team_editor
 import login
@@ -13,7 +14,7 @@ def get_menu_choice():
         if choice == '1':
             sell.sell_player()
         elif choice == '2':
-            loop = False
+            player_search.search_for_player(True)
         elif choice == '3':
             loop = False
         elif choice == '4':

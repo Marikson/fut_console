@@ -10,7 +10,7 @@ def sell_player():
     stay = True
     while stay:
         list_players.list_owned_players()
-        name_to_sell = input("Enter the full name of player you want to sell: ")
+        name_to_sell = input("Enter the " + display.Bcolors.UNDERLINE + "full name" + display.Bcolors.ENDC + " of player you want to sell: ")
         if name_to_sell == "back":
             print(display.Bcolors.OKBLUE + "  Going back to FUT MENU" + display.Bcolors.ENDC + '\n')
             return
@@ -27,15 +27,18 @@ def sell_player():
             owned = matched.ids
             at_ind = matched.at_ind
             ind = list(at_ind.keys())
-            val = list(at_ind.values())
+            player_to_sell_id = list(at_ind.values())
             del owned[ind[0]]
-            get_price_advice(fbid_with_rsid[val[0]])
+            get_price_advice(fbid_with_rsid[player_to_sell_id[0]])
             price = set_price()
             if price:
-                full_player_to_sell = request_try.try_request_get(vars.players_URL, {'futbin_id': futbin_ids[0]})
+                full_player_to_sell = request_try.try_request_get(vars.players_URL, {'futbin_id': player_to_sell_id[0]})
                 full_player_to_sell[0]['price'] = price
-                full_player_to_sell[0]['seller'] = login.user_id
-                full_player_to_sell[0]['available'] = str((datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat())
+                full_player_to_sell[0]['seller_id'] = login.user_id
+                expire_time = datetime.datetime.now() + datetime.timedelta(hours=1)
+                str_expire_time = str(expire_time.strftime("%d/%m/%Y %H:%M:%S"))
+                full_player_to_sell[0]['expire'] = str_expire_time
+                full_player_to_sell[0]['available'] = "True"
 
                 advertised = request_try.try_request_post(vars.market_URL, full_player_to_sell[0])
                 removed = request_try.try_request_patch(login.users_id_url, {'owned_players': owned})

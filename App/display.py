@@ -13,174 +13,168 @@ class Bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
+    LIGHTRED = '\033[91m'
     UNDERLINE = '\033[4m'
 
 
 def show_starting_11(players_list, positions):
-    player_rows = ["POS", "Name", "Overall rating", "Preferred Position", "Nationality", "Club", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
+    player_rows = ["POS", "Name", "Overall rating", "Preferred Position", "Nationality", "Club", "Rarity", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
     spreadsheet = PrettyTable(player_rows)
     for j in range(len(positions)):
         for i in range(len(players_list)):
             if players_list[i]['POS'] == positions[j]:
+                color = Bcolors.ENDC
+                if players_list[i]['quality'] == "Gold - Rare" or players_list[i]['quality'] == "Gold - Non-Rare":
+                    color = Bcolors.WARNING
+                elif players_list[i]['quality'] == "Silver - Rare" or players_list[i]['quality'] == "Silver - Non-Rare":
+                    color = Bcolors.WWHITE
+                elif players_list[i]['quality'] == "Bronze - Rare" or players_list[i]['quality'] == "Bronze - Non-Rare":
+                    color = Bcolors.ENDC
+                if players_list[i]['revision'] == "CL":
+                    color = Bcolors.OKBLUE
+                if players_list[i]['revision'] == "OTW":
+                    color = Bcolors.OKGREEN
+                if players_list[i]['revision'] == 'IF':
+                    color = Bcolors.OKCYAN
+                if players_list[i]['revision'] == 'Icon':
+                    color = Bcolors.MAGENTA
                 if players_list[i]['position'] == "GK":
                     attributes = [positions[j],
-                                  players_list[i]['player_extended_name'],
+                                  color + players_list[i]['player_extended_name'],
                                   players_list[i]['overall'],
                                   players_list[i]['position'],
                                   players_list[i]['nationality'],
                                   players_list[i]['club'],
+                                  players_list[i]['revision'],
                                   players_list[i]['gk_diving'],
                                   players_list[i]['gk_handling'],
                                   players_list[i]['gk_kicking'],
                                   players_list[i]['gk_reflexes'],
                                   players_list[i]['gk_speed'],
-                                  players_list[i]['gk_positoning']]
-                elif players_list[i]['revision'] == "CL":
-                    attributes = [positions[j],
-                                  Bcolors.OKBLUE + players_list[i]['player_extended_name'],
-                                  players_list[i]['overall'],
-                                  players_list[i]['position'],
-                                  players_list[i]['nationality'],
-                                  players_list[i]['club'],
-                                  players_list[i]['pace'],
-                                  players_list[i]['shooting'],
-                                  players_list[i]['passing'],
-                                  players_list[i]['dribbling'],
-                                  players_list[i]['defending'],
-                                  players_list[i]['physicality'] + Bcolors.ENDC]
-                elif players_list[i]['revision'] == "OTW":
-                    attributes = [positions[j],
-                                  Bcolors.OKGREEN + players_list[i]['player_extended_name'],
-                                  players_list[i]['overall'],
-                                  players_list[i]['position'],
-                                  players_list[i]['nationality'],
-                                  players_list[i]['club'],
-                                  players_list[i]['pace'],
-                                  players_list[i]['shooting'],
-                                  players_list[i]['passing'],
-                                  players_list[i]['dribbling'],
-                                  players_list[i]['defending'],
-                                  players_list[i]['physicality'] + Bcolors.ENDC]
-                elif players_list[i]['revision'] == 'IF':
-                    attributes = [positions[j],
-                                  Bcolors.MAGENTA + players_list[i]['player_extended_name'],
-                                  players_list[i]['overall'],
-                                  players_list[i]['position'],
-                                  players_list[i]['nationality'],
-                                  players_list[i]['club'],
-                                  players_list[i]['pace'],
-                                  players_list[i]['shooting'],
-                                  players_list[i]['passing'],
-                                  players_list[i]['dribbling'],
-                                  players_list[i]['defending'],
-                                  players_list[i]['physicality'] + Bcolors.ENDC]
-                elif players_list[i]['revision'] == 'Icon':
-                    attributes = [positions[j],
-                                  Bcolors.WWHITE + players_list[i]['player_extended_name'],
-                                  players_list[i]['overall'],
-                                  players_list[i]['position'],
-                                  players_list[i]['nationality'],
-                                  players_list[i]['club'],
-                                  players_list[i]['pace'],
-                                  players_list[i]['shooting'],
-                                  players_list[i]['passing'],
-                                  players_list[i]['dribbling'],
-                                  players_list[i]['defending'],
-                                  players_list[i]['physicality'] + Bcolors.ENDC]
+                                  players_list[i]['gk_positoning'] + Bcolors.ENDC]
                 else:
                     attributes = [positions[j],
-                                  players_list[i]['player_extended_name'],
+                                  color + players_list[i]['player_extended_name'],
                                   players_list[i]['overall'],
                                   players_list[i]['position'],
                                   players_list[i]['nationality'],
                                   players_list[i]['club'],
+                                  players_list[i]['revision'],
                                   players_list[i]['pace'],
                                   players_list[i]['shooting'],
                                   players_list[i]['passing'],
                                   players_list[i]['dribbling'],
                                   players_list[i]['defending'],
-                                  players_list[i]['physicality']]
+                                  players_list[i]['physicality'] + Bcolors.ENDC]
                 spreadsheet.add_row(attributes)
 
     print(spreadsheet)
 
 
 def show_players(players_list):
-    player_rows = ["Name", "Overall rating", "Position", "Nationality", "Club", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
+    player_rows = ["Name", "Overall rating", "Position", "Nationality", "Club", "Rarity", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
     spreadsheet = PrettyTable(player_rows)
     for i in range(len(players_list)):
+        color = Bcolors.ENDC
+        if players_list[i]['quality'] == "Gold - Rare" or players_list[i]['quality'] == "Gold - Non-Rare":
+            color = Bcolors.WARNING
+        elif players_list[i]['quality'] == "Silver - Rare" or players_list[i]['quality'] == "Silver - Non-Rare":
+            color = Bcolors.WWHITE
+        elif players_list[i]['quality'] == "Bronze - Rare" or players_list[i]['quality'] == "Bronze - Non-Rare":
+            color = Bcolors.ENDC
+        if players_list[i]['revision'] == "CL":
+            color = Bcolors.OKBLUE
+        if players_list[i]['revision'] == "OTW":
+            color = Bcolors.OKGREEN
+        if players_list[i]['revision'] == 'IF':
+            color = Bcolors.OKCYAN
+        if players_list[i]['revision'] == 'Icon':
+            color = Bcolors.MAGENTA
+
         if players_list[i]['position'] == "GK":
-            attributes = [players_list[i]['player_extended_name'],
+            attributes = [color + players_list[i]['player_extended_name'],
                           players_list[i]['overall'],
                           players_list[i]['position'],
                           players_list[i]['nationality'],
                           players_list[i]['club'],
+                          players_list[i]['revision'],
                           players_list[i]['gk_diving'],
                           players_list[i]['gk_handling'],
                           players_list[i]['gk_kicking'],
                           players_list[i]['gk_reflexes'],
                           players_list[i]['gk_speed'],
-                          players_list[i]['gk_positoning']]
-        elif players_list[i]['revision'] == "CL":
-            attributes = [Bcolors.OKBLUE + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['position'],
-                          players_list[i]['nationality'],
-                          players_list[i]['club'],
-                          players_list[i]['pace'],
-                          players_list[i]['shooting'],
-                          players_list[i]['passing'],
-                          players_list[i]['dribbling'],
-                          players_list[i]['defending'],
-                          players_list[i]['physicality'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == "OTW":
-            attributes = [Bcolors.OKGREEN + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['position'],
-                          players_list[i]['nationality'],
-                          players_list[i]['club'],
-                          players_list[i]['pace'],
-                          players_list[i]['shooting'],
-                          players_list[i]['passing'],
-                          players_list[i]['dribbling'],
-                          players_list[i]['defending'],
-                          players_list[i]['physicality'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == 'IF':
-            attributes = [Bcolors.MAGENTA + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['position'],
-                          players_list[i]['nationality'],
-                          players_list[i]['club'],
-                          players_list[i]['pace'],
-                          players_list[i]['shooting'],
-                          players_list[i]['passing'],
-                          players_list[i]['dribbling'],
-                          players_list[i]['defending'],
-                          players_list[i]['physicality'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == 'Icon':
-            attributes = [Bcolors.WWHITE + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['position'],
-                          players_list[i]['nationality'],
-                          players_list[i]['club'],
-                          players_list[i]['pace'],
-                          players_list[i]['shooting'],
-                          players_list[i]['passing'],
-                          players_list[i]['dribbling'],
-                          players_list[i]['defending'],
-                          players_list[i]['physicality'] + Bcolors.ENDC]
+                          players_list[i]['gk_positoning'] + Bcolors.ENDC]
         else:
-            attributes = [players_list[i]['player_extended_name'],
+            attributes = [color + players_list[i]['player_extended_name'],
                           players_list[i]['overall'],
                           players_list[i]['position'],
                           players_list[i]['nationality'],
                           players_list[i]['club'],
+                          players_list[i]['revision'],
                           players_list[i]['pace'],
                           players_list[i]['shooting'],
                           players_list[i]['passing'],
                           players_list[i]['dribbling'],
                           players_list[i]['defending'],
-                          players_list[i]['physicality']]
+                          players_list[i]['physicality'] + Bcolors.ENDC]
+
+        spreadsheet.add_row(attributes)
+
+    print(spreadsheet)
+
+
+def show_market_players(players_list):
+    player_rows = ["Market ID", "Name", "Overall rating", "Position", "Nationality", "Club", "Rarity", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality", "Price", "Expire"]
+    spreadsheet = PrettyTable(player_rows)
+    for i in range(len(players_list)):
+        color = Bcolors.ENDC
+        if players_list[i]['quality'] == "Gold - Rare" or players_list[i]['quality'] == "Gold - Non-Rare":
+            color = Bcolors.WARNING
+        elif players_list[i]['quality'] == "Silver - Rare" or players_list[i]['quality'] == "Silver - Non-Rare":
+            color = Bcolors.WWHITE
+        elif players_list[i]['quality'] == "Bronze - Rare" or players_list[i]['quality'] == "Bronze - Non-Rare":
+            color = Bcolors.ENDC
+        if players_list[i]['revision'] == "CL":
+            color = Bcolors.OKBLUE
+        if players_list[i]['revision'] == "OTW":
+            color = Bcolors.OKGREEN
+        if players_list[i]['revision'] == 'IF':
+            color = Bcolors.OKCYAN
+        if players_list[i]['revision'] == 'Icon':
+            color = Bcolors.MAGENTA
+
+        if players_list[i]['position'] == "GK":
+            attributes = [str(players_list[i]['id']),
+                          color + players_list[i]['player_extended_name'],
+                          players_list[i]['overall'],
+                          players_list[i]['position'],
+                          players_list[i]['nationality'],
+                          players_list[i]['club'],
+                          players_list[i]['revision'],
+                          players_list[i]['gk_diving'],
+                          players_list[i]['gk_handling'],
+                          players_list[i]['gk_kicking'],
+                          players_list[i]['gk_reflexes'],
+                          players_list[i]['gk_speed'],
+                          players_list[i]['gk_positoning'],
+                          players_list[i]['price'],
+                          players_list[i]['expire'] + Bcolors.ENDC]
+        else:
+            attributes = [str(players_list[i]['id']),
+                          color + players_list[i]['player_extended_name'],
+                          players_list[i]['overall'],
+                          players_list[i]['position'],
+                          players_list[i]['nationality'],
+                          players_list[i]['club'],
+                          players_list[i]['revision'],
+                          players_list[i]['pace'],
+                          players_list[i]['shooting'],
+                          players_list[i]['passing'],
+                          players_list[i]['dribbling'],
+                          players_list[i]['defending'],
+                          players_list[i]['physicality'],
+                          players_list[i]['price'],
+                          players_list[i]['expire'] + Bcolors.ENDC]
 
         spreadsheet.add_row(attributes)
 
@@ -191,101 +185,39 @@ def show_extended_players(players_list):
     main_rows = ["Name", "Overall", "Acceleration", "Sprint speed", "Positioning", "Finishing", "Shot power", "Penalties", "Free kick", "Crossing", "Long pass", "Short passs", "Ball controll", "Reactions", "Interceptions", "Marking", "Strength", "Stamina"]
     spreadsheet = PrettyTable(main_rows)
     for i in range(len(players_list)):
+        color = Bcolors.ENDC
+        if players_list[i]['quality'] == "Gold - Rare" or players_list[i]['quality'] == "Gold - Non-Rare":
+            color = Bcolors.WARNING
+        elif players_list[i]['quality'] == "Silver - Rare" or players_list[i]['quality'] == "Silver - Non-Rare":
+            color = Bcolors.WWHITE
+        elif players_list[i]['quality'] == "Bronze - Rare" or players_list[i]['quality'] == "Bronze - Non-Rare":
+            color = Bcolors.ENDC
         if players_list[i]['revision'] == "CL":
-            attributes = [Bcolors.OKBLUE + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['pace_acceleration'],
-                          players_list[i]['pace_sprint_speed'],
-                          players_list[i]['shoot_positioning'],
-                          players_list[i]['shoot_finishing'],
-                          players_list[i]['shoot_shot_power'],
-                          players_list[i]['shoot_penalties'],
-                          players_list[i]['pass_free_kick'],
-                          players_list[i]['pass_crossing'],
-                          players_list[i]['pass_long'],
-                          players_list[i]['pass_short'],
-                          players_list[i]['drib_ball_control'],
-                          players_list[i]['drib_reactions'],
-                          players_list[i]['def_interceptions'],
-                          players_list[i]['def_marking'],
-                          players_list[i]['phys_strength'],
-                          players_list[i]['phys_stamina'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == "OTW":
-            attributes = [Bcolors.OKGREEN + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['pace_acceleration'],
-                          players_list[i]['pace_sprint_speed'],
-                          players_list[i]['shoot_positioning'],
-                          players_list[i]['shoot_finishing'],
-                          players_list[i]['shoot_shot_power'],
-                          players_list[i]['shoot_penalties'],
-                          players_list[i]['pass_free_kick'],
-                          players_list[i]['pass_crossing'],
-                          players_list[i]['pass_long'],
-                          players_list[i]['pass_short'],
-                          players_list[i]['drib_ball_control'],
-                          players_list[i]['drib_reactions'],
-                          players_list[i]['def_interceptions'],
-                          players_list[i]['def_marking'],
-                          players_list[i]['phys_strength'],
-                          players_list[i]['phys_stamina'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == 'IF':
-            attributes = [Bcolors.MAGENTA + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['pace_acceleration'],
-                          players_list[i]['pace_sprint_speed'],
-                          players_list[i]['shoot_positioning'],
-                          players_list[i]['shoot_finishing'],
-                          players_list[i]['shoot_shot_power'],
-                          players_list[i]['shoot_penalties'],
-                          players_list[i]['pass_free_kick'],
-                          players_list[i]['pass_crossing'],
-                          players_list[i]['pass_long'],
-                          players_list[i]['pass_short'],
-                          players_list[i]['drib_ball_control'],
-                          players_list[i]['drib_reactions'],
-                          players_list[i]['def_interceptions'],
-                          players_list[i]['def_marking'],
-                          players_list[i]['phys_strength'],
-                          players_list[i]['phys_stamina'] + Bcolors.ENDC]
-        elif players_list[i]['revision'] == 'Icon':
-            attributes = [Bcolors.WWHITE + players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['pace_acceleration'],
-                          players_list[i]['pace_sprint_speed'],
-                          players_list[i]['shoot_positioning'],
-                          players_list[i]['shoot_finishing'],
-                          players_list[i]['shoot_shot_power'],
-                          players_list[i]['shoot_penalties'],
-                          players_list[i]['pass_free_kick'],
-                          players_list[i]['pass_crossing'],
-                          players_list[i]['pass_long'],
-                          players_list[i]['pass_short'],
-                          players_list[i]['drib_ball_control'],
-                          players_list[i]['drib_reactions'],
-                          players_list[i]['def_interceptions'],
-                          players_list[i]['def_marking'],
-                          players_list[i]['phys_strength'],
-                          players_list[i]['phys_stamina'] + Bcolors.ENDC]
-        else:
-            attributes = [players_list[i]['player_extended_name'],
-                          players_list[i]['overall'],
-                          players_list[i]['pace_acceleration'],
-                          players_list[i]['pace_sprint_speed'],
-                          players_list[i]['shoot_positioning'],
-                          players_list[i]['shoot_finishing'],
-                          players_list[i]['shoot_shot_power'],
-                          players_list[i]['shoot_penalties'],
-                          players_list[i]['pass_free_kick'],
-                          players_list[i]['pass_crossing'],
-                          players_list[i]['pass_long'],
-                          players_list[i]['pass_short'],
-                          players_list[i]['drib_ball_control'],
-                          players_list[i]['drib_reactions'],
-                          players_list[i]['def_interceptions'],
-                          players_list[i]['def_marking'],
-                          players_list[i]['phys_strength'],
-                          players_list[i]['phys_stamina']]
+            color = Bcolors.OKBLUE
+        if players_list[i]['revision'] == "OTW":
+            color = Bcolors.OKGREEN
+        if players_list[i]['revision'] == 'IF':
+            color = Bcolors.OKCYAN
+        if players_list[i]['revision'] == 'Icon':
+            color = Bcolors.MAGENTA
+        attributes = [color + players_list[i]['player_extended_name'],
+                      players_list[i]['overall'],
+                      players_list[i]['pace_acceleration'],
+                      players_list[i]['pace_sprint_speed'],
+                      players_list[i]['shoot_positioning'],
+                      players_list[i]['shoot_finishing'],
+                      players_list[i]['shoot_shot_power'],
+                      players_list[i]['shoot_penalties'],
+                      players_list[i]['pass_free_kick'],
+                      players_list[i]['pass_crossing'],
+                      players_list[i]['pass_long'],
+                      players_list[i]['pass_short'],
+                      players_list[i]['drib_ball_control'],
+                      players_list[i]['drib_reactions'],
+                      players_list[i]['def_interceptions'],
+                      players_list[i]['def_marking'],
+                      players_list[i]['phys_strength'],
+                      players_list[i]['phys_stamina'] + Bcolors.ENDC]
 
         spreadsheet.add_row(attributes)
 
@@ -310,11 +242,11 @@ def show_price_advice(avgp, minp, maxp, prices, dates):
 
 def main_menu_menupoints():
     print(30 * "-", "FUT MENU", 30 * "-")
-    print("1. SELL player from MySquad ")
+    print("1. SELL player from Reserve Team ")
     print("2. BUY player from Market ")
     print("3. List buy/sell history ")
     print("4. Search for player ")
-    print("5. Edit team ")
+    print("5. My Team ")
     print("6. Log out ")
     print(70 * "-")
     print()
@@ -322,9 +254,9 @@ def main_menu_menupoints():
 
 def my_team_menupoints():
     print(28 * "-", "TEAM EDITOR", 29 * "-")
-    print("  1. Show starting 11")
-    print("  2. List my players")
-    print("  3. Edit starting 11")
+    print("  1. Show Starting 11")
+    print("  2. Show Reserve Team")
+    print("  3. Edit My Team")
     print(70 * "-")
 
 
@@ -333,9 +265,23 @@ def player_search_menupoints():
     print("  1. Name")
     print("  2. Quality")
     print("  3. Position")
-    print("  4. Nationality")
+    print("  4. Country")
     print("  5. Club")
     print("  6. Rarity")
     print("  7. League")
     print("  8. Overall rating")
+    print(70 * "-")
+
+def market_search_menupoints():
+    print(28 * "-", "MARKET SEARCH", 27 * "-")
+    print("  1.  Name")
+    print("  2.  Quality")
+    print("  3.  Position")
+    print("  4.  Country")
+    print("  5.  Club")
+    print("  6.  Rarity")
+    print("  7.  League")
+    print("  8.  Overall rating")
+    print("  9.  Min price")
+    print("  10. Max price")
     print(70 * "-")
