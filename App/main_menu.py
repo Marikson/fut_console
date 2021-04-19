@@ -1,9 +1,9 @@
 import display
 import sell
-import buy
 import player_search
 import team_editor
 import login
+import market_checker
 
 
 def get_menu_choice():
@@ -16,7 +16,7 @@ def get_menu_choice():
         elif choice == '2':
             player_search.search_for_player(True)
         elif choice == '3':
-            loop = False
+            market_checker.market_check()
         elif choice == '4':
             player_search.search_for_player()
         elif choice == '5':

@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import termplotlib
-
+import login
+from datetime import datetime
 
 class Bcolors:
     HEADER = '\033[95m'
@@ -240,6 +241,72 @@ def show_price_advice(avgp, minp, maxp, prices, dates):
     print(spreadsheet)
 
 
+def show_history(players_list):
+    player_rows = ["Status", "Price", "Name", "Overall rating", "Position", "Nationality", "Club", "Rarity", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
+    spreadsheet = PrettyTable(player_rows)
+    for i in range(len(players_list)):
+        color = Bcolors.ENDC
+        if players_list[i]['quality'] == "Gold - Rare" or players_list[i]['quality'] == "Gold - Non-Rare":
+            color = Bcolors.WARNING
+        elif players_list[i]['quality'] == "Silver - Rare" or players_list[i]['quality'] == "Silver - Non-Rare":
+            color = Bcolors.WWHITE
+        elif players_list[i]['quality'] == "Bronze - Rare" or players_list[i]['quality'] == "Bronze - Non-Rare":
+            color = Bcolors.ENDC
+        if players_list[i]['revision'] == "CL":
+            color = Bcolors.OKBLUE
+        if players_list[i]['revision'] == "OTW":
+            color = Bcolors.OKGREEN
+        if players_list[i]['revision'] == 'IF':
+            color = Bcolors.OKCYAN
+        if players_list[i]['revision'] == 'Icon':
+            color = Bcolors.MAGENTA
+
+        expire_date = datetime.strptime(players_list[i]['expire'], '%d/%m/%Y %H:%M:%S')
+        if players_list[i]['seller_id'] == login.user_id and players_list[i]['available'] == "False":
+            status = "SOLD"
+        elif players_list[i]['seller_id'] == login.user_id and expire_date > datetime.now() and players_list[i]['available'] == "True":
+            status = "ACTIVE"
+        elif players_list[i]['seller_id'] == login.user_id and expire_date < datetime.now() and players_list[i]['available'] == "True":
+            status = "EXPIRED"
+        elif players_list[i]['seller_id'] != login.user_id and players_list[i]['available'] == "False":
+            status = "BOUGHT"
+
+        if players_list[i]['position'] == "GK":
+            attributes = [status,
+                          players_list[i]['price'],
+                          color + players_list[i]['player_extended_name'],
+                          players_list[i]['overall'],
+                          players_list[i]['position'],
+                          players_list[i]['nationality'],
+                          players_list[i]['club'],
+                          players_list[i]['revision'],
+                          players_list[i]['gk_diving'],
+                          players_list[i]['gk_handling'],
+                          players_list[i]['gk_kicking'],
+                          players_list[i]['gk_reflexes'],
+                          players_list[i]['gk_speed'],
+                          players_list[i]['gk_positoning'] + Bcolors.ENDC]
+        else:
+            attributes = [status,
+                          players_list[i]['price'],
+                          color + players_list[i]['player_extended_name'],
+                          players_list[i]['overall'],
+                          players_list[i]['position'],
+                          players_list[i]['nationality'],
+                          players_list[i]['club'],
+                          players_list[i]['revision'],
+                          players_list[i]['pace'],
+                          players_list[i]['shooting'],
+                          players_list[i]['passing'],
+                          players_list[i]['dribbling'],
+                          players_list[i]['defending'],
+                          players_list[i]['physicality'] + Bcolors.ENDC]
+
+        spreadsheet.add_row(attributes)
+
+    print(spreadsheet)
+
+
 def main_menu_menupoints():
     print(30 * "-", "FUT MENU", 30 * "-")
     print("1. SELL player from Reserve Team ")
@@ -271,6 +338,7 @@ def player_search_menupoints():
     print("  7. League")
     print("  8. Overall rating")
     print(70 * "-")
+
 
 def market_search_menupoints():
     print(28 * "-", "MARKET SEARCH", 27 * "-")

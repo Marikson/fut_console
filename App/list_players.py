@@ -20,8 +20,13 @@ def list_owned_players():
     for i in range(len(players)):
         users_players_extended_list.append(players[i])
 
-    print(display.Bcolors.OKBLUE + "Your Reserve Team" + display.Bcolors.ENDC)
-    display.show_players(users_players_extended_list)
+    if users_players:
+        print(display.Bcolors.OKBLUE + "Your Reserve Team" + display.Bcolors.ENDC)
+        display.show_players(users_players_extended_list)
+        return True
+    else:
+        print(display.Bcolors.WARNING + "  You have no players in your Reserve Team." + display.Bcolors.ENDC)
+        return False
 
 
 def list_starting_11():
