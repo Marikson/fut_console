@@ -1,5 +1,4 @@
 import display
-import login
 import vars
 import request_try
 import list_players
@@ -21,7 +20,7 @@ def my_team():
             elif int(choice) == 3:
                 edit_team()
             else:
-                print(display.Bcolors.WARNING + "  No menu point found with number: " + choice + "!" + display.Bcolors.ENDC)
+                print(display.Bcolors.WARNING + "  No menu point found with number: " + choice + "." + display.Bcolors.ENDC)
         except ValueError:
             print(display.Bcolors.WARNING + "  Aspect input must be a number! Given '" + choice + "' is wrong." + display.Bcolors.ENDC)
 
@@ -73,24 +72,24 @@ def changing(futbin_ids):
             starting_ind = list(at_starting.keys())
             starting[starting_ind[0]] = at_starting[starting_ind[1]]
             starting[starting_ind[1]] = at_starting[starting_ind[0]]
-            post = request_try.try_request_patch(login.users_id_url, {'starting_11': starting})
-            if post:
+            patched = request_try.try_request_patch(vars.users_id_url, {'starting_11': starting})
+            if patched:
                 print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
 
         elif len(at_starting) < len(at_owned):
             # Pointless, non visible change
-            print(display.Bcolors.WARNING + "You are trying to switch two players from substitutes, which is pointless!" + display.Bcolors.ENDC)
+            print(display.Bcolors.WARNING + "You are trying to switch two players from substitutes, which is pointless." + display.Bcolors.ENDC)
         else:
             owned_ind = list(at_owned.keys())
             starting_ind = list(at_starting.keys())
             owned[int(owned_ind[0])] = at_starting[starting_ind[0]]
             starting[starting_ind[0]] = at_owned[owned_ind[0]]
-            post_starting = request_try.try_request_patch(login.users_id_url, {'starting_11': starting})
-            post_owned = request_try.try_request_patch(login.users_id_url, {'owned_players': owned})
-            if post_owned and post_starting:
+            patch_starting = request_try.try_request_patch(vars.users_id_url, {'starting_11': starting})
+            patch_owned = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
+            if patch_owned and patch_starting:
                 print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
             else:
                 print(display.Bcolors.WARNING + "Change failed!" + display.Bcolors.ENDC)
 
     else:
-        print(display.Bcolors.WARNING + "One, or more of the names is/are misspelled!" + display.Bcolors.ENDC)
+        print(display.Bcolors.WARNING + "One, or more of the names are misspelled!" + display.Bcolors.ENDC)

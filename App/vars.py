@@ -5,6 +5,8 @@ prices_URL = "http://localhost:3000/Prices"
 users_URL = "http://localhost:3000/Users"
 credentials_URL = 'http://localhost:3000/Credentials'
 market_URL = 'http://localhost:3000/Market'
+user_id = None
+users_id_url = None
 search_aspect = [{'player_name': "player name"},
                  {'quality': "quality"},
                  {'position': "position"},
@@ -23,3 +25,10 @@ market_aspect = [{'player_name': "player name"},
                  {'overall': "overall rating"},
                  {'min_price': "minimum price"},
                  {'max_price': "maximum price"}]
+
+
+def set_user_vars(url, id):
+    global user_id
+    global users_id_url
+    users_id_url = url
+    user_id = id

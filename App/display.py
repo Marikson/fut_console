@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
 import termplotlib
-import login
+import vars
 from datetime import datetime
 
 class Bcolors:
@@ -262,13 +262,14 @@ def show_history(players_list):
             color = Bcolors.MAGENTA
 
         expire_date = datetime.strptime(players_list[i]['expire'], '%d/%m/%Y %H:%M:%S')
-        if players_list[i]['seller_id'] == login.user_id and players_list[i]['available'] == "False":
+        if players_list[i]['seller_id'] == vars.user_id and players_list[i]['available'] == "False":
             status = "SOLD"
-        elif players_list[i]['seller_id'] == login.user_id and expire_date > datetime.now() and players_list[i]['available'] == "True":
+        elif players_list[i]['seller_id'] == vars.user_id and expire_date > datetime.now() and players_list[i]['available'] == "True":
             status = "ACTIVE"
-        elif players_list[i]['seller_id'] == login.user_id and expire_date < datetime.now() and players_list[i]['available'] == "True":
+        elif players_list[i]['seller_id'] == vars.user_id and expire_date < datetime.now() and players_list[i]['available'] == "True":
             status = "EXPIRED"
-        elif players_list[i]['seller_id'] != login.user_id and players_list[i]['available'] == "False":
+        # elif players_list[i]['seller_id'] != vars.user_id and players_list[i]['available'] == "False":
+        else:
             status = "BOUGHT"
 
         if players_list[i]['position'] == "GK":

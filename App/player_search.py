@@ -3,6 +3,7 @@ import vars
 import request_try
 import buy
 
+
 def search_for_player(buy_purpose = False):
     stay = True
     while stay:
@@ -102,6 +103,9 @@ def get_aspects(nums_list, buy_purpose = False):
 
 
 def more_details(player_names):
+    if len(player_names) == 0:
+        print(display.Bcolors.WARNING + "      No aspect given!" + display.Bcolors.ENDC)
+        return False
     players_to_request = player_names.split(',')
     for i in range(len(players_to_request)):
         players_to_request[i] = players_to_request[i].rstrip().lstrip()

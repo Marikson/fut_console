@@ -6,7 +6,7 @@ import collections
 
 
 def get_users_players_id(type_of_players):
-    user = request_try.try_request_get(vars.users_URL, {'id': login.user_id})
+    user = request_try.try_request_get(vars.users_URL, {'id': vars.user_id})
     if user:
         users_players = user[0][type_of_players]
         return users_players
