@@ -18,6 +18,22 @@ class Bcolors:
     UNDERLINE = '\033[4m'
 
 
+def print_warning(warning_string):
+    print(Bcolors.WARNING + warning_string + Bcolors.ENDC)
+
+
+def print_info(info_string):
+    print(Bcolors.OKBLUE + info_string + Bcolors.ENDC + '\n')
+
+
+def print_info_green(info_string):
+    print(Bcolors.OKGREEN + info_string + Bcolors.ENDC + '\n')
+
+
+def print_info_cyan(info_string):
+    print(Bcolors.OKCYAN + info_string + Bcolors.ENDC + '\n')
+
+
 def show_starting_11(players_list, positions):
     player_rows = ["POS", "Name", "Overall rating", "Preferred Position", "Nationality", "Club", "Rarity", "Pace", "Shooting", "Passing", "Dribbling", "Defending", "Physicality"]
     spreadsheet = PrettyTable(player_rows)

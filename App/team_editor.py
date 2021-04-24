@@ -11,7 +11,7 @@ def my_team():
         choice = input("  Enter number of menupoint: ")
         try:
             if choice == "back":
-                print(display.Bcolors.OKBLUE + "  Going back to FUT MENU" + display.Bcolors.ENDC + '\n')
+                display.print_info("  Going back to FUT MENU")
                 return
             elif int(choice) == 1:
                 list_players.list_starting_11()
@@ -20,9 +20,11 @@ def my_team():
             elif int(choice) == 3:
                 edit_team()
             else:
-                print(display.Bcolors.WARNING + "  No menu point found with number: " + choice + "." + display.Bcolors.ENDC)
+                warning_string = "  No menu point found with number: " + choice + "."
+                display.print_warning(warning_string)
         except ValueError:
-            print(display.Bcolors.WARNING + "  Aspect input must be a number! Given '" + choice + "' is wrong." + display.Bcolors.ENDC)
+            warning_string = "  Aspect input must be a number! Given '" + choice + "' is wrong."
+            display.print_warning(warning_string)
 
 
 def edit_team():
@@ -33,20 +35,20 @@ def edit_team():
 
         input_names = input("Enter the full name of players you want to change: ")
         if input_names == "back":
-            print(display.Bcolors.OKBLUE + "Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
+            display.print_info("Going back to TEAM EDITOR")
             return
 
         players_to_sub = input_names.split(',')
         for i in range(len(players_to_sub)):
             players_to_sub[i] = players_to_sub[i].rstrip().lstrip()
             if players_to_sub[i] == "back":
-                print(display.Bcolors.OKBLUE + "Going back to TEAM EDITOR" + display.Bcolors.ENDC + '\n')
+                display.print_info("Going back to TEAM EDITOR")
                 return
         while "" in players_to_sub:
             players_to_sub.remove("")
 
         if len(players_to_sub) > 2 or len(players_to_sub) <= 1:
-            print(display.Bcolors.WARNING + "Changing requires 2 players separated with ','!" + display.Bcolors.ENDC + '\n')
+            display.print_warning("Changing requires 2 players separated with ','!")
         else:
             players = request_try.try_request_get(vars.players_URL, {'player_extended_name': players_to_sub})
             players_futbin_id = []
@@ -69,16 +71,25 @@ def changing(futbin_ids):
 
     if starting_found + owned_found == 2:
         if len(at_starting) > len(at_owned):
-            starting_ind = list(at_starting.keys())
-            starting[starting_ind[0]] = at_starting[starting_ind[1]]
-            starting[starting_ind[1]] = at_starting[starting_ind[0]]
-            patched = request_try.try_request_patch(vars.users_id_url, {'starting_11': starting})
-            if patched:
-                print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
+            if len(at_starting) < 2:
+                display.print_warning("No change.")
+                return False
+            else:
+                starting_ind = list(at_starting.keys())
+                starting[starting_ind[0]] = at_starting[starting_ind[1]]
+                starting[starting_ind[1]] = at_starting[starting_ind[0]]
+                patched = request_try.try_request_patch(vars.users_id_url, {'starting_11': starting})
+                if patched:
+                    display.print_info_green("Players switched successfully!")
+                    return True
+                else:
+                    display.print_warning("Switch failed.")
+                    return False
 
         elif len(at_starting) < len(at_owned):
             # Pointless, non visible change
-            print(display.Bcolors.WARNING + "You are trying to switch two players from substitutes, which is pointless." + display.Bcolors.ENDC)
+            display.print_warning("You are trying to switch two players from substitutes, which is pointless.")
+            return False
         else:
             owned_ind = list(at_owned.keys())
             starting_ind = list(at_starting.keys())
@@ -87,9 +98,12 @@ def changing(futbin_ids):
             patch_starting = request_try.try_request_patch(vars.users_id_url, {'starting_11': starting})
             patch_owned = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
             if patch_owned and patch_starting:
-                print(display.Bcolors.OKGREEN + "Players switched successfully!" + display.Bcolors.ENDC)
+                display.print_info_green("Players switched successfully!")
+                return True
             else:
-                print(display.Bcolors.WARNING + "Change failed!" + display.Bcolors.ENDC)
+                display.print_warning("Switch failed.")
+                return False
 
     else:
-        print(display.Bcolors.WARNING + "One, or more of the names are misspelled!" + display.Bcolors.ENDC)
+        display.print_warning("One, or more of the names are misspelled!")
+        return False

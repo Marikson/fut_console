@@ -11,28 +11,8 @@ def get_coins():
 
 def buy_player(params, min_price, max_price):
     market_players = request_try.try_request_get(vars.market_URL, params)
-    selectable_market_ids = []
     if market_players:
-        for item in list(market_players):
-            expire_date = datetime.strptime(item['expire'], '%d/%m/%Y %H:%M:%S')
-            if expire_date < datetime.now():
-                market_players.remove(item)
-            elif item['available'] == "False":
-                market_players.remove(item)
-            elif item['seller_id'] == vars.user_id:
-                market_players.remove(item)
-            elif min_price is not None:
-                if item['price'] < int(min_price):
-                    market_players.remove(item)
-                else:
-                    selectable_market_ids.append(item['id'])
-            elif max_price is not None:
-                if item['price'] > int(max_price):
-                    market_players.remove(item)
-                else:
-                    selectable_market_ids.append(item['id'])
-            else:
-                selectable_market_ids.append(item['id'])
+        selectable_market_ids = create_selectable_ids(market_players, min_price, max_price)
         if market_players:
             display.show_market_players(market_players)
             market_id = get_market_id(selectable_market_ids)
@@ -43,13 +23,38 @@ def buy_player(params, min_price, max_price):
                     history = user[0]['history']
                     history.append(market_id)
                     added_to_history = request_try.try_request_patch(vars.users_id_url, {'history': history})
-                    print(display.Bcolors.OKGREEN + "      You bought the player!" + display.Bcolors.ENDC)
+                    display.print_info_green("      You bought the player!")
         else:
-            print(display.Bcolors.OKCYAN + "      No matching player on the market with params above!" + display.Bcolors.ENDC + '\n')
+            display.print_info_cyan("      No matching player on the market with params above!")
             return
     else:
-        print(display.Bcolors.OKCYAN + "      No matching player on the market with params above!" + display.Bcolors.ENDC + '\n')
+        display.print_info_cyan("      No matching player on the market with params above!")
         return
+
+
+def create_selectable_ids(market_players, min_price, max_price):
+    selectable_market_ids = []
+    for item in list(market_players):
+        expire_date = datetime.strptime(item['expire'], '%d/%m/%Y %H:%M:%S')
+        if expire_date < datetime.now():
+            market_players.remove(item)
+        elif item['available'] == "False":
+            market_players.remove(item)
+        elif item['seller_id'] == vars.user_id:
+            market_players.remove(item)
+        elif min_price is not None:
+            if item['price'] < int(min_price):
+                market_players.remove(item)
+            else:
+                selectable_market_ids.append(item['id'])
+        elif max_price is not None:
+            if item['price'] > int(max_price):
+                market_players.remove(item)
+            else:
+                selectable_market_ids.append(item['id'])
+        else:
+            selectable_market_ids.append(item['id'])
+    return selectable_market_ids
 
 
 def get_market_id(selectable_market_ids):
@@ -57,16 +62,16 @@ def get_market_id(selectable_market_ids):
     while not_good:
         market_id_str = input("      Enter the the " + display.Bcolors.UNDERLINE + "Market ID" + display.Bcolors.ENDC + " of player you want to buy: ")
         if market_id_str == "back":
-            print(display.Bcolors.OKBLUE + "      Going back to MARKET SEARCH" + display.Bcolors.ENDC + '\n')
+            display.print_info("      Going back to MARKET SEARCH")
             return False
         try:
             market_id = int(market_id_str)
             if market_id in selectable_market_ids:
                 return market_id
             else:
-                print(display.Bcolors.WARNING + "      The Market ID given is not valid!" + display.Bcolors.ENDC)
+                display.print_warning("      The Market ID given is not valid!")
         except ValueError:
-            print(display.Bcolors.WARNING + "      The Market ID given is not an integer!" + display.Bcolors.ENDC)
+            display.print_warning("      The Market ID given is not an integer!")
 
 
 def buyable_check(market_id):
@@ -74,32 +79,36 @@ def buyable_check(market_id):
     user = request_try.try_request_get(vars.users_URL, {"id": vars.user_id})
     buyable = False
     if player_to_buy[0]['available'] == "False":
-        print(display.Bcolors.WARNING + "      The Market ID given is not valid!" + display.Bcolors.ENDC)
+        display.print_warning("      The Market ID given is not valid!")
         return buyable
     if player_to_buy[0]['seller_id'] == vars.user_id:
-        print(display.Bcolors.WARNING + "      The Market ID given is not valid!" + display.Bcolors.ENDC)
+        display.print_warning("      The Market ID given is not valid!")
         return buyable
     expire_date = datetime.strptime(player_to_buy[0]['expire'], '%d/%m/%Y %H:%M:%S')
     if expire_date < datetime.now():
-        print(display.Bcolors.WARNING + "      There is no player on the market with Market ID: " + str(market_id) + display.Bcolors.ENDC)
+        warning_string = "      There is no player on the market with Market ID: " + str(market_id)
+        display.print_warning(warning_string)
         return buyable
     user_owned_players_id = user[0]['owned_players']
     if user_owned_players_id:
         user_owned_players = request_try.try_request_get(vars.players_URL, {'futbin_id': user_owned_players_id})
         for i in range(len(user_owned_players)):
             if player_to_buy[0]['player_extended_name'] == user_owned_players[i]['player_extended_name']:
-                print(display.Bcolors.WARNING + "      You already own " + player_to_buy[0]['player_extended_name'] + "!" + display.Bcolors.ENDC)
+                warning_string = "      You already own " + player_to_buy[0]['player_extended_name'] + "!"
+                display.print_warning(warning_string)
                 return buyable
     user_starting_11_id = user[0]['starting_11']
     if user_starting_11_id:
         user_starting_players = request_try.try_request_get(vars.players_URL, {'futbin_id': user_starting_11_id})
         for i in range(len(user_starting_players)):
             if player_to_buy[0]['player_extended_name'] == user_starting_players[i]['player_extended_name']:
-                print(display.Bcolors.WARNING + "      You already own " + player_to_buy[0]['player_extended_name'] + "!" + display.Bcolors.ENDC)
+                warning_string = "      You already own " + player_to_buy[0]['player_extended_name'] + "!"
+                display.print_warning(warning_string)
                 return buyable
     if int(player_to_buy[0]['price']) > int(user[0]['coins']):
-        print(display.Bcolors.WARNING + "      You do not have enough coins!" + display.Bcolors.ENDC)
-        print(display.Bcolors.OKCYAN + "      Your coins: " + str(user[0]['coins']) + ", players price: " + str(player_to_buy[0]['price']) + display.Bcolors.ENDC + '\n')
+        display.print_warning("      You do not have enough coins!")
+        info_string = "      Your coins: " + str(user[0]['coins']) + ", players price: " + str(player_to_buy[0]['price'])
+        display.print_info_cyan(info_string)
         return buyable
     else:
         buyable = True

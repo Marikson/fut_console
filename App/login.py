@@ -7,7 +7,6 @@ import vars
 login_tries = 1
 
 
-
 def try_log_in(tries):
     if log_in(tries):
         main_menu.get_menu_choice()
@@ -28,12 +27,13 @@ def authenticate(usern, pw):
     user = request_try.try_request_get(vars.credentials_URL, {'name': usern})
     if user:
         if user[0]['password'] == pw:
-            print('\n' + display.Bcolors.OKBLUE + "Hello " + usern + "!" + display.Bcolors.ENDC + '\n')
+            greeting = "Hello " + usern + "!"
+            display.print_info(greeting)
             user_id = user[0]['id']
             users_id_url = vars.users_URL + '/' + str(user_id)
             vars.set_user_vars(users_id_url, user_id)
             return True
 
-    print(display.Bcolors.WARNING + "Wrong username, or password!" + display.Bcolors.ENDC + '\n')
+    display.print_warning("Wrong username, or password!")
     return False
 

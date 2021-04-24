@@ -26,4 +26,4 @@ def get_menu_choice():
             login.try_log_in(login.login_tries)
             loop = False
         else:
-            input(display.Bcolors.WARNING + "Wrong menu selection. Enter any key to try again.." + display.Bcolors.ENDC)
+            display.print_warning("Wrong menu selection. Enter any key to try again..")

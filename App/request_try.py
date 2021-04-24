@@ -13,20 +13,25 @@ def try_request_get(url, params):
         return json_data
 
     except requests.exceptions.Timeout as errt:
-        print(display.Bcolors.WARNING + "Timeout Error:" + display.Bcolors.ENDC, errt)
-        raise SystemExit(errt)
+        error_string = "Timeout Error:" + str(errt)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.TooManyRedirects as errw:
-        print(display.Bcolors.WARNING + "Wrong URL:" + display.Bcolors.ENDC, errw)
-        raise SystemExit(errw)
+        error_string = "Timeout Error:" + str(errw)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.HTTPError as errh:
-        print(display.Bcolors.WARNING + "Http Error:" + display.Bcolors.ENDC, errh)
-        raise SystemExit(errh)
+        error_string = "Timeout Error:" + str(errh)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.ConnectionError as errc:
-        print(display.Bcolors.WARNING + "Error Connecting:" + display.Bcolors.ENDC, errc)
-        raise SystemExit(errc)
+        error_string = "Timeout Error:" + str(errc)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.RequestException as err:
-        print(display.Bcolors.WARNING + "OOps: Something Else" + display.Bcolors.ENDC, err)
-        raise SystemExit(err)
+        error_string = "Timeout Error:" + str(err)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except ValueError:
         print(display.Bcolors.WARNING + "No JSON returned!" + display.Bcolors.ENDC)
         raise SystemExit()
@@ -42,20 +47,25 @@ def try_request_patch(url, params):
 
         return True
     except requests.exceptions.Timeout as errt:
-        print(display.Bcolors.WARNING + "Timeout Error:" + display.Bcolors.ENDC, errt)
-        raise SystemExit(errt)
+        error_string = "Timeout Error:" + str(errt)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.TooManyRedirects as errw:
-        print(display.Bcolors.WARNING + "Wrong URL:" + display.Bcolors.ENDC, errw)
-        raise SystemExit(errw)
+        error_string = "Timeout Error:" + str(errw)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.HTTPError as errh:
-        print(display.Bcolors.WARNING + "Http Error:" + display.Bcolors.ENDC, errh)
-        raise SystemExit(errh)
+        error_string = "Timeout Error:" + str(errh)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.ConnectionError as errc:
-        print(display.Bcolors.WARNING + "Error Connecting:" + display.Bcolors.ENDC, errc)
-        raise SystemExit(errc)
+        error_string = "Timeout Error:" + str(errc)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.RequestException as err:
-        print(display.Bcolors.WARNING + "OOps: Something Else" + display.Bcolors.ENDC, err)
-        raise SystemExit(err)
+        error_string = "Timeout Error:" + str(err)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
 
 
 def try_request_post(url, params):
@@ -68,18 +78,23 @@ def try_request_post(url, params):
 
         return True
     except requests.exceptions.Timeout as errt:
-        print(display.Bcolors.WARNING + "Timeout Error:" + display.Bcolors.ENDC, errt)
-        raise SystemExit(errt)
+        error_string = "Timeout Error:" + str(errt)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.TooManyRedirects as errw:
-        print(display.Bcolors.WARNING + "Wrong URL:" + display.Bcolors.ENDC, errw)
-        raise SystemExit(errw)
+        error_string = "Timeout Error:" + str(errw)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.HTTPError as errh:
-        print(display.Bcolors.WARNING + "Http Error:" + display.Bcolors.ENDC, errh)
-        raise SystemExit(errh)
+        error_string = "Timeout Error:" + str(errh)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.ConnectionError as errc:
-        print(display.Bcolors.WARNING + "Error Connecting:" + display.Bcolors.ENDC, errc)
-        raise SystemExit(errc)
+        error_string = "Timeout Error:" + str(errc)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
     except requests.exceptions.RequestException as err:
-        print(display.Bcolors.WARNING + "OOps: Something Else" + display.Bcolors.ENDC, err)
-        raise SystemExit(err)
+        error_string = "Timeout Error:" + str(err)
+        display.print_warning(error_string)
+        raise SystemExit("Please try again later!")
 

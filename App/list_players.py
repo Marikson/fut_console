@@ -1,5 +1,4 @@
 import display
-import login
 import vars
 import request_try
 import collections
