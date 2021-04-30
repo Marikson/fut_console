@@ -35,7 +35,9 @@ def market_check():
 def reserve_team_update(expired_players, history, user_owned_players_id):
     for player in expired_players:
         if int(player['futbin_id']) in user_owned_players_id:
-            sell.relist(player)
+            relisted = sell.relist(player)
+            if relisted:
+                display.print_info_green("Player relisted on the market successfully!")
         else:
             user_owned_players_id.append(int(player['futbin_id']))
             history.remove(player['id'])

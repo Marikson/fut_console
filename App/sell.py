@@ -15,26 +15,17 @@ def sell_player():
                 return False
             name_to_sell = name_to_sell.rstrip().lstrip()
             players_with_name_to_sell = request_try.try_request_get(vars.players_URL, {'player_extended_name': name_to_sell})
-
-            fbid_with_rsid = {}
-            for i in range(len(players_with_name_to_sell)):
-                fbid_with_rsid[int(players_with_name_to_sell[i]['futbin_id'])] = int(players_with_name_to_sell[i]['resource_id'])
-
+            fbid_with_rsid = futbin_ids_with_resource_ids(players_with_name_to_sell)
             futbin_ids = list(fbid_with_rsid.keys())
-            matched = list_players.select_matching(futbin_ids, "owned_players")
-            if matched.found_counter == 1:
-                owned_player_ids = matched.ids
-                index_id_pair = matched.at_ind
-                index_to_remove = list(index_id_pair.keys())
-                player_to_sell_id = list(index_id_pair.values())
-                del owned_player_ids[index_to_remove[0]]
-                get_price_advice(fbid_with_rsid[player_to_sell_id[0]])
+            found_at_owned = list_players.select_matching(futbin_ids, "owned_players")
+            if found_at_owned.found_counter == 1:
+                player_to_sell_id = get_player_to_sell_id(found_at_owned)
+                owned_without_player_to_sell = remove_from_owned(found_at_owned)
+                get_price_advice(fbid_with_rsid[player_to_sell_id])
                 price = set_price()
                 if price:
-                    full_player_to_sell = request_try.try_request_get(vars.players_URL, {'futbin_id': player_to_sell_id[0]})
-                    player_to_market = add_market_data(full_player_to_sell[0], price)
-                    advertised = request_try.try_request_post(vars.market_URL, player_to_market)
-                    removed = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned_player_ids})
+                    removed = patch_owned(owned_without_player_to_sell)
+                    advertised = put_player_to_market(player_to_sell_id, price)
                     if advertised and removed:
                         display.print_info_green("Player listed on the market successfully!")
                         return True
@@ -45,6 +36,36 @@ def sell_player():
         else:
             display.print_warning("  Selling only possible from Reserve Team.")
             return False
+
+
+def get_player_to_sell_id(found_at_owned):
+    player_to_sell_id = list(found_at_owned.at_ind.values())
+    return player_to_sell_id[0]
+
+
+def remove_from_owned(found_at_owned):
+    index_to_remove = list(found_at_owned.at_ind.keys())
+    del found_at_owned.ids[index_to_remove[0]]
+    return found_at_owned.ids
+
+
+def futbin_ids_with_resource_ids(players_with_name_to_sell):
+    fbid_with_rsid = {}
+    for i in range(len(players_with_name_to_sell)):
+        fbid_with_rsid[int(players_with_name_to_sell[i]['futbin_id'])] = int(players_with_name_to_sell[i]['resource_id'])
+    return fbid_with_rsid
+
+
+def put_player_to_market(id, price):
+    full_player_to_sell = request_try.try_request_get(vars.players_URL, {'futbin_id': id})
+    player_to_market = add_market_data(full_player_to_sell[0], price)
+    advertised = request_try.try_request_post(vars.market_URL, player_to_market)
+    return advertised
+
+
+def patch_owned(owned):
+    removed = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
+    return removed
 
 
 def set_price():
@@ -68,34 +89,36 @@ def get_price_advice(resource_id):
     prices = request_try.try_request_get(vars.prices_URL, {'resource_id': resource_id})
     sum_price = 0
     all_prices = []
-    for date in prices[0]['dates']:
-        sum_price = sum_price + int(prices[0]['dates'][date]['ps4'])
-        all_prices.append(int(prices[0]['dates'][date]['ps4']))
+    if prices:
+        for date in prices[0]['dates']:
+            sum_price = sum_price + int(prices[0]['dates'][date]['ps4'])
+            all_prices.append(int(prices[0]['dates'][date]['ps4']))
 
-    all_dates = list(prices[0]['dates'].keys())
-    avg_price = int(sum_price / len(prices[0]['dates']))
+        all_dates = list(prices[0]['dates'].keys())
+        avg_price = int(sum_price / len(prices[0]['dates']))
 
-    min_data = {'date': "-",
-                'price': None}
-    for date in prices[0]['dates']:
-        if not min_data['price']:
-            min_data['price'] = int(prices[0]['dates'][date]['ps4'])
-            min_data['date'] = date
-        elif min_data['price'] >= int(prices[0]['dates'][date]['ps4']):
-            min_data['price'] = int(prices[0]['dates'][date]['ps4'])
-            min_data['date'] = date
+        min_data = {'date': "-",
+                    'price': None}
+        for date in prices[0]['dates']:
+            if not min_data['price']:
+                min_data['price'] = int(prices[0]['dates'][date]['ps4'])
+                min_data['date'] = date
+            elif min_data['price'] >= int(prices[0]['dates'][date]['ps4']):
+                min_data['price'] = int(prices[0]['dates'][date]['ps4'])
+                min_data['date'] = date
 
-    max_data = {'date': "-",
-                'price': None}
-    for date in prices[0]['dates']:
-        if not max_data['price']:
-            max_data['price'] = int(prices[0]['dates'][date]['ps4'])
-            max_data['date'] = date
-        elif max_data['price'] <= int(prices[0]['dates'][date]['ps4']):
-            max_data['price'] = int(prices[0]['dates'][date]['ps4'])
-            max_data['date'] = date
-
-    display.show_price_advice(avg_price, min_data, max_data, all_prices, all_dates)
+        max_data = {'date': "-",
+                    'price': None}
+        for date in prices[0]['dates']:
+            if not max_data['price']:
+                max_data['price'] = int(prices[0]['dates'][date]['ps4'])
+                max_data['date'] = date
+            elif max_data['price'] <= int(prices[0]['dates'][date]['ps4']):
+                max_data['price'] = int(prices[0]['dates'][date]['ps4'])
+                max_data['date'] = date
+        display.show_price_advice(avg_price, min_data, max_data, all_prices, all_dates)
+    else:
+        display.print_info("There is no market data for this player.")
 
 
 def add_market_data(player, price):
@@ -113,22 +136,16 @@ def relist(player):
     while not_relisted:
         warning_string = "Nobody bought your player, and you can not have a duplicate of " + player['player_extended_name']
         display.print_warning(warning_string)
-        full_player_to_sell = player
         get_price_advice(player['resource_id'])
         price = set_price()
         if price:
-            full_player_to_sell['price'] = price
-            full_player_to_sell['seller_id'] = vars.user_id
             expire_time = datetime.datetime.now() + datetime.timedelta(hours=1)
             str_expire_time = str(expire_time.strftime("%d/%m/%Y %H:%M:%S"))
-            full_player_to_sell['expire'] = str_expire_time
-            full_player_to_sell['available'] = "True"
-            listed_player_url = vars.market_URL + '/' + str(full_player_to_sell['id'])
+            listed_player_url = vars.market_URL + '/' + str(player['id'])
             advertised = request_try.try_request_patch(listed_player_url, {'price': price, 'expire': str_expire_time, 'available': "True"})
             if advertised:
-                display.print_info_green("Player relisted on the market successfully!")
-                return
+                return True
             else:
                 display.print_warning("Listing on the market failed!")
         else:
-            return
+            return False

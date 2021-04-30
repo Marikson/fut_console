@@ -7,7 +7,7 @@ def try_request_get(url, params):
     try:
         response = requests.get(url, params)
         if response.status_code == 404:
-            print(url + display.Bcolors.WARNING + " Not found!" + display.Bcolors.ENDC)
+            display.print_warning("HTTP Error 404, URL not found!")
             raise SystemExit()
         json_data = response.json()
         return json_data
@@ -42,7 +42,7 @@ def try_request_patch(url, params):
     try:
         response = requests.patch(url, data=param, headers={"Content-Type": "application/json"})
         if response.status_code == 404:
-            print(url + display.Bcolors.WARNING + " Not found!" + display.Bcolors.ENDC)
+            display.print_warning("HTTP Error 404, URL not found!")
             return False
 
         return True
@@ -73,7 +73,7 @@ def try_request_post(url, params):
     try:
         response = requests.post(url, data=param, headers={"Content-Type": "application/json"})
         if response.status_code == 404:
-            print(url + display.Bcolors.WARNING + " Not found!" + display.Bcolors.ENDC)
+            display.print_warning("HTTP Error 404, URL not found!")
             return False
 
         return True

@@ -3,6 +3,7 @@ import termplotlib
 import vars
 from datetime import datetime
 
+
 class Bcolors:
     HEADER = '\033[95m'
     MAGENTA = '\033[35m'
