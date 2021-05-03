@@ -3,6 +3,8 @@ import display
 import main_menu
 import request_try
 import vars
+from getpass import getpass
+
 
 login_tries = 1
 
@@ -19,7 +21,7 @@ def log_in(tries):
         sys.exit("Sorry, you are unable to log in!")
     else:
         username = input("Enter your username: ")
-        password = input("Enter your password: ")
+        password = getpass('Enter your password: ')
         return authenticate(username, password)
 
 
