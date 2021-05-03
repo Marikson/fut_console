@@ -7,6 +7,7 @@ import player_search
 import request_try
 import sell
 import buy
+import market_checker
 from unittest import mock
 unittest.TestLoader.sortTestMethodsUsing = None
 
@@ -413,7 +414,7 @@ class BuyTestCases(unittest.TestCase):
         self.assertEqual(len(buyer_owned_players), 0)
         self.assertListEqual(buyer_owned_players, [])
 
-    def my_test13_market_from_buyer_pov(self):
+    def my_test13_market_from_buyer_pov_before_buy(self):
         market_for_buyer = request_try.try_request_get(vars.market_URL, {})
         market_players_buyer_pov_real = request_try.try_request_get(vars.market_URL, {})
         buyer_filtered_market_players = buy.filter_market_players(market_players_buyer_pov_real, None, '100000')
@@ -502,7 +503,17 @@ class BuyTestCases(unittest.TestCase):
         self.assertEqual(len(buyer_owned_players), 1)
         self.assertListEqual(buyer_owned_players, [1])
 
-    def my_test22_seller_props_after_sell(self):
+    def my_test22_market_from_buyer_pov_after_buy(self):
+        market_for_buyer = request_try.try_request_get(vars.market_URL, {})
+        market_players_buyer_pov_real = request_try.try_request_get(vars.market_URL, {})
+        buyer_filtered_market_players = buy.filter_market_players(market_players_buyer_pov_real, None, '100000')
+        buyer_selectable_ids = buy.create_selectable_market_ids(buyer_filtered_market_players)
+        self.assertEqual(len(market_for_buyer), 1)
+        self.assertEqual(len(buyer_filtered_market_players), 0)
+        self.assertEqual(len(buyer_selectable_ids), 0)
+        self.assertListEqual(buyer_selectable_ids, [])
+
+    def my_test23_seller_props_after_sell(self):
         vars.user_id = 4
         seller = request_try.try_request_get(vars.users_URL, {'id': vars.user_id})
         seller_coins = seller[0]['coins']
@@ -528,6 +539,30 @@ class BuyTestCases(unittest.TestCase):
             except Exception as e:
                 self.fail("{} failed ({}: {})".format(step, type(e), e))
 
+
+@mock.patch("display.print_warning")
+@mock.patch("display.print_info")
+@mock.patch("display.print_info_green")
+@mock.patch("display.print_info_cyan")
+@mock.patch("display.show_history")
+class HistoryTestCases(unittest.TestCase):
+    def test_get_buyer_history(self, show_history, mock_cyan, mock_green, mock_info, mock_warning):
+        vars.user_id = 5
+        vars.users_id_url = "http://localhost:3000/Users/5"
+        buyer_got_history = market_checker.market_check()
+        self.assertEqual(buyer_got_history, True)
+
+    def test_get_seller_history(self, show_history, mock_cyan, mock_green, mock_info, mock_warning):
+        vars.user_id = 4
+        vars.users_id_url = "http://localhost:3000/Users/4"
+        seller_got_history = market_checker.market_check()
+        self.assertEqual(seller_got_history, True)
+
+    def test_outsider_history(self, show_history, mock_cyan, mock_green, mock_info, mock_warning):
+        vars.user_id = 1
+        vars.users_id_url = "http://localhost:3000/Users/1"
+        outsider_got_history = market_checker.market_check()
+        self.assertEqual(outsider_got_history, False)
 
 if __name__ == '__main__':
     unittest.main()

@@ -28,8 +28,10 @@ def market_check():
             if players_expired:
                 current_history = reserve_team_update(players_expired, current_history, user[0]['owned_players'])
             history_patched = request_try.try_request_patch(vars.users_id_url, {'history': current_history})
+            return True
     else:
         display.print_warning("You have no buy/sell history.")
+        return False
 
 
 def reserve_team_update(expired_players, history, user_owned_players_id):
