@@ -87,7 +87,6 @@ def changing(futbin_ids):
                     return False
 
         elif len(at_starting) < len(at_owned):
-            # Pointless, non visible change
             display.print_warning("You are trying to switch two players from substitutes, which is pointless.")
             return False
         else:

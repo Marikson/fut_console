@@ -20,11 +20,11 @@ def list_owned_players():
         users_players_extended_list.append(players[i])
 
     if users_players:
-        print(display.Bcolors.OKBLUE + "Your Reserve Team" + display.Bcolors.ENDC)
+        display.print_info("Your Reserve Team")
         display.show_players(users_players_extended_list)
         return True
     else:
-        print(display.Bcolors.WARNING + "  You have no players in your Reserve Team." + display.Bcolors.ENDC)
+        display.print_warning("  You have no players in your Reserve Team.")
         return False
 
 
@@ -41,7 +41,7 @@ def list_starting_11():
                 players[i]['POS'] = j
                 users_players_extended_list.append(players[i])
 
-    print(display.Bcolors.OKBLUE + "Your Starting 11" + display.Bcolors.ENDC)
+    display.print_info("Your Starting 11")
     display.show_starting_11(users_players_extended_list, positions)
 
 

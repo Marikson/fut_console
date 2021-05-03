@@ -12,28 +12,31 @@ def get_coins():
 def buy_player(params, min_price, max_price):
     market_players = request_try.try_request_get(vars.market_URL, params)
     if market_players:
-        selectable_market_ids = create_selectable_ids(market_players, min_price, max_price)
-        if market_players:
-            display.show_market_players(market_players)
+        filtered_market_players = filter_market_players(market_players, min_price, max_price)
+        if filtered_market_players:
+            display.show_market_players(filtered_market_players)
+            selectable_market_ids = create_selectable_market_ids(filtered_market_players)
             market_id = get_market_id(selectable_market_ids)
             if market_id in selectable_market_ids:
                 double_check = buyable_check(market_id)
                 if double_check:
-                    user = request_try.try_request_get(vars.users_URL, {"id": vars.user_id})
-                    history = user[0]['history']
-                    history.append(market_id)
-                    added_to_history = request_try.try_request_patch(vars.users_id_url, {'history': history})
                     display.print_info_green("      You bought the player!")
         else:
             display.print_info_cyan("      No matching player on the market with params above!")
-            return
+            return False
     else:
         display.print_info_cyan("      No matching player on the market with params above!")
-        return
+        return False
 
 
-def create_selectable_ids(market_players, min_price, max_price):
+def create_selectable_market_ids(filtered_market_players):
     selectable_market_ids = []
+    for item in filtered_market_players:
+        selectable_market_ids.append(item['id'])
+    return selectable_market_ids
+
+
+def filter_market_players(market_players, min_price, max_price):
     for item in list(market_players):
         expire_date = datetime.strptime(item['expire'], '%d/%m/%Y %H:%M:%S')
         if expire_date < datetime.now():
@@ -42,20 +45,14 @@ def create_selectable_ids(market_players, min_price, max_price):
             market_players.remove(item)
         elif item['seller_id'] == vars.user_id:
             market_players.remove(item)
-        elif min_price is not None:
-            if item['price'] < int(min_price):
-                market_players.remove(item)
-            else:
-                selectable_market_ids.append(item['id'])
-        elif max_price is not None:
-            if item['price'] > int(max_price):
-                market_players.remove(item)
-            else:
-                selectable_market_ids.append(item['id'])
-        else:
-            selectable_market_ids.append(item['id'])
-    return selectable_market_ids
-
+        elif min_price is not None or max_price is not None:
+            if min_price is not None:
+                if item['price'] < int(min_price):
+                    market_players.remove(item)
+            if max_price is not None:
+                if item['price'] > int(max_price):
+                    market_players.remove(item)
+    return market_players
 
 def get_market_id(selectable_market_ids):
     not_good = True
@@ -112,24 +109,40 @@ def buyable_check(market_id):
         return buyable
     else:
         buyable = True
-    buyed = False
+    bought = False
     if buyable:
-        user_owned_players_id.append(int(player_to_buy[0]['futbin_id']))
-        owned = user_owned_players_id
-        added_to_owned = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
+        transaction_succeded = transaction(user_owned_players_id, user[0], player_to_buy[0], market_id)
+        if transaction_succeded:
+            bought = True
+    return buyable and bought
 
-        coin_remained = int(user[0]['coins']) - int(player_to_buy[0]['price'])
-        coin_minus = request_try.try_request_patch(vars.users_id_url, {'coins': coin_remained})
 
-        seller_user = request_try.try_request_get(vars.users_URL, {"id": player_to_buy[0]['seller_id']})
-        seller_user_url = vars.users_URL + '/' + str(player_to_buy[0]['seller_id'])
-        seller_coin = int(seller_user[0]['coins']) + int(player_to_buy[0]['price'])
-        coin_plus = request_try.try_request_patch(seller_user_url, {'coins': seller_coin})
+def transaction(user_owned_players_id, user, player_to_buy, market_id):
+    user_owned_players_id.append(int(player_to_buy['futbin_id']))
+    owned = user_owned_players_id
+    added_to_owned = request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
 
-        market_id_url = vars.market_URL + '/' + str(market_id)
-        set_unavailable = request_try.try_request_patch(market_id_url, {'available': "False"})
+    coin_remained = int(user['coins']) - int(player_to_buy['price'])
+    coin_minus = request_try.try_request_patch(vars.users_id_url, {'coins': coin_remained})
 
-        if added_to_owned + coin_minus + set_unavailable + coin_plus:
-            buyed = True
-    return buyable + buyed
+    seller_user = request_try.try_request_get(vars.users_URL, {"id": player_to_buy['seller_id']})
+    seller_user_url = vars.users_URL + '/' + str(player_to_buy['seller_id'])
+    seller_coin = int(seller_user[0]['coins']) + int(player_to_buy['price'])
+    coin_plus = request_try.try_request_patch(seller_user_url, {'coins': seller_coin})
 
+    market_id_url = vars.market_URL + '/' + str(market_id)
+    set_unavailable = request_try.try_request_patch(market_id_url, {'available': "False"})
+
+    added_to_history = add_to_history(user, market_id)
+    if added_to_owned and coin_minus and coin_plus and set_unavailable and added_to_history:
+        return True
+    else:
+        return False
+
+
+def add_to_history(user, market_id):
+    history = user['history']
+    int_market_id = int(market_id)
+    history.append(int_market_id)
+    added_to_history = request_try.try_request_patch(vars.users_id_url, {'history': history})
+    return added_to_history
