@@ -32,3 +32,8 @@ def set_user_vars(url, id):
     global users_id_url
     users_id_url = url
     user_id = id
+
+
+"""
+4418,      23859,       12676,
+"""

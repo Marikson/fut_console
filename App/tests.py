@@ -320,8 +320,8 @@ class SellPlayerTests(unittest.TestCase):
         user_history_after_sell = user_after_sell[0]['history']
         self.assertEqual(len(user_owned_players_after_sell), 0)
         self.assertListEqual(user_owned_players_after_sell, [])
-        self.assertEqual(len(user_history_after_sell), 0)
-        self.assertListEqual(user_history_after_sell, [])
+        self.assertEqual(len(user_history_after_sell), 1)
+        self.assertListEqual(user_history_after_sell, [1])
 
     def my_test7_try_selling_with_empty_reserved_team(self):
         selling_with_empty_reserve_team = sell.sell_player()
@@ -344,40 +344,7 @@ class SellPlayerTests(unittest.TestCase):
 @mock.patch("display.print_info")
 @mock.patch("display.print_info_green")
 @mock.patch("display.print_info_cyan")
-class BuyTestCases(unittest.TestCase):
-    @mock.patch("request_try.try_request_get")
-    def setUp(self, request_get) -> None:
-        request_get.return_value = [{'futbin_id': '1', 'player_name': 'Shearer', 'player_extended_name': 'Alan Shearer',
-                                     'quality': 'Gold - Rare', 'revision': 'Icon', 'origin': 'Prime', 'overall': '91',
-                                     'club': 'FUT 21 ICONS', 'league': 'Icons', 'nationality': 'England',
-                                     'position': 'ST', 'age': '50', 'date_of_birth': '1970.08.13', 'height': '182',
-                                     'weight': '78', 'intl_rep': '5', 'added_date': '2020.09.10', 'pace': '81',
-                                     'pace_acceleration': '82', 'pace_sprint_speed': '80', 'dribbling': '78',
-                                     'drib_agility': '71', 'drib_balance': '71', 'drib_reactions': '87',
-                                     'drib_ball_control': '82', 'drib_dribbling': '76', 'drib_composure': '88',
-                                     'shooting': '93', 'shoot_positioning': '92', 'shoot_finishing': '95',
-                                     'shoot_shot_power': '94', 'shoot_long_shots': '86', 'shoot_volleys': '93',
-                                     'shoot_penalties': '94', 'passing': '77', 'pass_vision': '76',
-                                     'pass_crossing': '77', 'pass_free_kick': '86', 'pass_short': '82',
-                                     'pass_long': '63', 'pass_curve': '81', 'defending': '52',
-                                     'def_interceptions': '44', 'def_heading': '94', 'def_marking': '28',
-                                     'def_stand_tackle': '65', 'def_slid_tackle': '55', 'physicality': '85',
-                                     'phys_jumping': '88', 'phys_stamina': '84', 'phys_strength': '88',
-                                     'phys_aggression': '80', 'gk_diving': '', 'gk_reflexes': '',
-                                     'gk_handling': '', 'gk_speed': '', 'gk_kicking': '',
-                                     'gk_positoning': '', 'pref_foot': 'Right', 'att_workrate': 'High',
-                                     'def_workrate': 'Med', 'weak_foot': '3', 'skill_moves': '2',
-                                     'cb': '66', 'rb': '68', 'lb': '68', 'rwb': '69', 'lwb': '69', 'cdm': '67',
-                                     'cm': '77', 'rm': '81', 'lm': '81', 'cam': '82', 'cf': '85', 'rf': '85',
-                                     'lf': '85', 'rw': '82', 'lw': '82', 'st': '89',
-                                     'traits': 'Power Header Long Shot Taker (CPU AI Only) Power Free-Kick',
-                                     'specialities': '', 'base_id': '51', 'resource_id': '51', 'ps4_last': '',
-                                     'ps4_min': '', 'ps4_max': '', 'ps4_prp': '0', 'xbox_last': '', 'xbox_min': '',
-                                     'xbox_max': '', 'xbox_prp': '0', 'pc_last': '', 'pc_min': '', 'pc_max': '',
-                                     'pc_prp': '0', 'price': 50000, 'seller_id': 4, 'expire': '02/05/2022 17:03:41',
-                                     'available': 'True', 'id': 1}]
-        self.market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-
+class BuyPlayerTests(unittest.TestCase):
     def my_test10_seller_props_before_sell(self):
         vars.user_id = 4
         seller = request_try.try_request_get(vars.users_URL, {'id': vars.user_id})
@@ -386,8 +353,8 @@ class BuyTestCases(unittest.TestCase):
         seller_owned_players = seller[0]['owned_players']
         self.assertEqual(vars.user_id, 4)
         self.assertEqual(seller_coins, 100000)
-        self.assertEqual(len(seller_history), 0)
-        self.assertListEqual(seller_history, [])
+        self.assertEqual(len(seller_history), 1)
+        self.assertListEqual(seller_history, [1])
         self.assertEqual(len(seller_owned_players), 0)
         self.assertListEqual(seller_owned_players, [])
 
@@ -426,7 +393,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test14_buy_buyer_pov_with_max_price_too_low(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_max_price_too_low = buy.create_selectable_ids(self.market_players_buyer_pov, None, '10000')
         buyer_filtered_market_players_with_max_price_too_low = buy.filter_market_players(market_players_buyer_pov, None, '10000')
         buyer_selectable_ids_with_max_price_too_low = buy.create_selectable_market_ids(buyer_filtered_market_players_with_max_price_too_low)
         self.assertEqual(len(buyer_filtered_market_players_with_max_price_too_low), 0)
@@ -436,7 +402,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test15_buy_buyer_pov_with_max_price_high_enough(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_max_price_high_enough = buy.create_selectable_ids(self.market_players_buyer_pov, None, '50000')
         buyer_filtered_market_players_with_max_price_high_enough = buy.filter_market_players(market_players_buyer_pov, None, '50000')
         buyer_selectable_ids_with_max_price_high_enough = buy.create_selectable_market_ids(buyer_filtered_market_players_with_max_price_high_enough)
         self.assertEqual(len(buyer_filtered_market_players_with_max_price_high_enough), 1)
@@ -446,7 +411,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test16_buy_buyer_pov_with_min_price_too_high(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_min_price_too_high = buy.create_selectable_ids(self.market_players_buyer_pov, '70000', None)
         buyer_filtered_market_players_with_min_price_too_high = buy.filter_market_players(market_players_buyer_pov, '70000', None)
         buyer_selectable_ids_with_min_price_too_high = buy.create_selectable_market_ids(buyer_filtered_market_players_with_min_price_too_high)
         self.assertEqual(len(buyer_filtered_market_players_with_min_price_too_high), 0)
@@ -456,7 +420,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test17_buy_buyer_pov_with_min_price_low_enough(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_min_price_low_enough = buy.create_selectable_ids(self.market_players_buyer_pov, '20000', None)
         buyer_filtered_market_players_with_min_price_low_enough = buy.filter_market_players(market_players_buyer_pov, '20000', None)
         buyer_selectable_ids_with_in_price_low_enough = buy.create_selectable_market_ids(buyer_filtered_market_players_with_min_price_low_enough)
         self.assertEqual(len(buyer_filtered_market_players_with_min_price_low_enough), 1)
@@ -466,7 +429,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test18_buy_buyer_pov_with_min_and_max_wrong(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_min_and_max_wrong = buy.create_selectable_ids(self.market_players_buyer_pov, '70000', '100000')
         buyer_filtered_market_players_with_min_and_max_wrong = buy.filter_market_players(market_players_buyer_pov, '70000', '100000')
         buyer_selectable_ids_with_min_and_max_wrong = buy.create_selectable_market_ids(buyer_filtered_market_players_with_min_and_max_wrong)
         self.assertEqual(len(buyer_filtered_market_players_with_min_and_max_wrong), 0)
@@ -476,7 +438,6 @@ class BuyTestCases(unittest.TestCase):
 
     def my_test19_buy_buyer_pov_with_min_and_max_good(self):
         market_players_buyer_pov = request_try.try_request_get(vars.market_URL, {})
-        # buyer_selectable_ids_with_min_and_max_good = buy.create_selectable_ids(self.market_players_buyer_pov, '30000', '60000')
         buyer_filtered_market_players_with_min_and_max_good = buy.filter_market_players(market_players_buyer_pov, '30000', '60000')
         buyer_selectable_ids_with_min_and_max_good = buy.create_selectable_market_ids(buyer_filtered_market_players_with_min_and_max_good)
         self.assertEqual(len(buyer_filtered_market_players_with_min_and_max_good), 1)
@@ -521,8 +482,8 @@ class BuyTestCases(unittest.TestCase):
         seller_owned_players = seller[0]['owned_players']
         self.assertEqual(vars.user_id, 4)
         self.assertEqual(seller_coins, 150000)
-        self.assertEqual(len(seller_history), 0)
-        self.assertListEqual(seller_history, [])
+        self.assertEqual(len(seller_history), 1)
+        self.assertListEqual(seller_history, [1])
         self.assertEqual(len(seller_owned_players), 0)
         self.assertListEqual(seller_owned_players, [])
 
@@ -545,7 +506,7 @@ class BuyTestCases(unittest.TestCase):
 @mock.patch("display.print_info_green")
 @mock.patch("display.print_info_cyan")
 @mock.patch("display.show_history")
-class HistoryTestCases(unittest.TestCase):
+class HistoryTests(unittest.TestCase):
     def test_get_buyer_history(self, show_history, mock_cyan, mock_green, mock_info, mock_warning):
         vars.user_id = 5
         vars.users_id_url = "http://localhost:3000/Users/5"

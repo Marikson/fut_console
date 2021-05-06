@@ -14,13 +14,8 @@ def market_check():
         players_expired = []
         for item in players_on_market:
             expire_date = datetime.strptime(item['expire'], '%d/%m/%Y %H:%M:%S')
-            if item['id'] in current_history:
-                if expire_date < datetime.now() and item['available'] == "True":
-                    players_expired.append(item)
-            elif expire_date < datetime.now() and item['available'] == "True":
-                pass
-            else:
-                current_history.append(item['id'])
+            if expire_date < datetime.now() and item['available'] == "True" and item['id'] in current_history:
+                players_expired.append(item)
 
         if current_history:
             players_by_market_id = request_try.try_request_get(vars.market_URL, {'id': current_history})
@@ -42,7 +37,8 @@ def reserve_team_update(expired_players, history, user_owned_players_id):
                 display.print_info_green("Player relisted on the market successfully!")
         else:
             user_owned_players_id.append(int(player['futbin_id']))
-            history.remove(player['id'])
+            if player['id'] in history:
+                history.remove(player['id'])
     owned = user_owned_players_id
     request_try.try_request_patch(vars.users_id_url, {'owned_players': owned})
     return history

@@ -10,10 +10,10 @@ def sell_player():
     while stay:
         if list_players.list_owned_players():
             name_to_sell = input("Enter the " + display.Bcolors.UNDERLINE + "full name" + display.Bcolors.ENDC + " of player you want to sell: ")
+            name_to_sell = name_to_sell.rstrip().lstrip()
             if name_to_sell == "back":
                 display.print_info("Going back to FUT MENU")
                 return False
-            name_to_sell = name_to_sell.rstrip().lstrip()
             players_with_name_to_sell = request_try.try_request_get(vars.players_URL, {'player_extended_name': name_to_sell})
             fbid_with_rsid = futbin_ids_with_resource_ids(players_with_name_to_sell)
             futbin_ids = list(fbid_with_rsid.keys())
@@ -60,7 +60,18 @@ def put_player_to_market(id, price):
     full_player_to_sell = request_try.try_request_get(vars.players_URL, {'futbin_id': id})
     player_to_market = add_market_data(full_player_to_sell[0], price)
     advertised = request_try.try_request_post(vars.market_URL, player_to_market)
-    return advertised
+    added_to_history = add_to_history()
+    return advertised and added_to_history
+
+
+def add_to_history():
+    users_players_on_market = request_try.try_request_get(vars.market_URL, {'seller_id': vars.user_id})
+    users_last_player_on_market = users_players_on_market[-1]
+    user = request_try.try_request_get(vars.users_URL, {'id': vars.user_id})
+    current_history = user[0]['history']
+    current_history.append(users_last_player_on_market['id'])
+    added_to_history = request_try.try_request_patch(vars.users_id_url, {'history': current_history})
+    return added_to_history
 
 
 def patch_owned(owned):
@@ -72,6 +83,7 @@ def set_price():
     price_not_good = True
     while price_not_good:
         str_price = input("Enter the price you want to sell your player for: ")
+        str_price = str_price.rstrip().lstrip()
         if str_price == "back":
             display.print_info("Going back to SELLING PLAYER")
             return False

@@ -58,6 +58,7 @@ def get_market_id(selectable_market_ids):
     not_good = True
     while not_good:
         market_id_str = input("      Enter the the " + display.Bcolors.UNDERLINE + "Market ID" + display.Bcolors.ENDC + " of player you want to buy: ")
+        market_id_str = market_id_str.rstrip().lstrip()
         if market_id_str == "back":
             display.print_info("      Going back to MARKET SEARCH")
             return False
@@ -94,8 +95,9 @@ def buyable_check(market_id):
                 warning_string = "      You already own " + player_to_buy[0]['player_extended_name'] + "!"
                 display.print_warning(warning_string)
                 return buyable
-    user_starting_11_id = user[0]['starting_11']
-    if user_starting_11_id:
+    user_starting_11 = user[0]['starting_11']
+    if user_starting_11:
+        user_starting_11_id = list(user_starting_11.values())
         user_starting_players = request_try.try_request_get(vars.players_URL, {'futbin_id': user_starting_11_id})
         for i in range(len(user_starting_players)):
             if player_to_buy[0]['player_extended_name'] == user_starting_players[i]['player_extended_name']:
