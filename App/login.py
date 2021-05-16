@@ -6,14 +6,13 @@ import vars
 from getpass import getpass
 
 
-login_tries = 1
-
-
 def try_log_in(tries):
-    if log_in(tries):
-        main_menu.get_menu_choice()
-    else:
-        try_log_in(tries + 1)
+    while True:
+        if log_in(tries):
+            main_menu.get_menu_choice()
+            tries = 1
+        else:
+            tries = tries + 1
 
 
 def log_in(tries):

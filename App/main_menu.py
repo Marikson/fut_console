@@ -2,8 +2,8 @@ import display
 import sell
 import player_search
 import team_editor
-import login
 import market_checker
+
 
 
 def get_menu_choice():
@@ -23,7 +23,6 @@ def get_menu_choice():
             team_editor.my_team()
         elif choice == '6':
             print("Logging out..." + '\n')
-            login.try_log_in(login.login_tries)
-            loop = False
+            return
         else:
             display.print_warning("Wrong menu selection. Enter any key to try again..")

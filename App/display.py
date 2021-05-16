@@ -285,7 +285,6 @@ def show_history(players_list):
             status = "ACTIVE"
         elif players_list[i]['seller_id'] == vars.user_id and expire_date < datetime.now() and players_list[i]['available'] == "True":
             status = "EXPIRED"
-        # elif players_list[i]['seller_id'] != vars.user_id and players_list[i]['available'] == "False":
         else:
             status = "BOUGHT"
 
